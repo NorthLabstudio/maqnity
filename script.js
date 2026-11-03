@@ -1,14 +1,13 @@
-
 /* =========================================
    MAQNITY — SMART ENGINEERING PLATFORM
-   Lógica de la aplicación
+   Lógica de la aplicación + soporte ES/EN
    ========================================= */
 
 /*
   IMPORTANTE:
   El cálculo CAE implementado aquí es provisional.
-  Debe verificarse y sustituirse si la fórmula
-  exigida en clase utiliza otro procedimiento.
+  Debe verificarse y sustituirse si la fórmula exigida
+  en clase utiliza otro procedimiento.
 */
 
 "use strict";
@@ -20,29 +19,443 @@
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menuToggle");
 const pageName = document.getElementById("pageName");
-
 const machineList = document.getElementById("machineList");
 const machineCounter = document.getElementById("machineCounter");
 const totalMachines = document.getElementById("totalMachines");
-
 const evaluationStatus = document.getElementById("evaluationStatus");
 const bestMachineHome = document.getElementById("bestMachineHome");
-
 const addMachineBtn = document.getElementById("addMachineBtn");
 const calculateBtn = document.getElementById("calculateBtn");
 const formFeedback = document.getElementById("formFeedback");
-
 const resultCount = document.getElementById("resultCount");
 const resultBestCost = document.getElementById("resultBestCost");
 const chart = document.getElementById("chart");
 const resultsTable = document.getElementById("resultsTable");
-const recommendationContent = document.getElementById(
-  "recommendationContent"
-);
+const recommendationContent = document.getElementById("recommendationContent");
 const toast = document.getElementById("toast");
 
 // =========================================
-// 2. ESTADO DE LA APLICACIÓN
+// 2. IDIOMAS
+// =========================================
+
+const translations = {
+  es: {
+    pages: { inicio: "Inicio", maquinas: "Mis máquinas", comparacion: "Comparación", recomendacion: "Recomendación" },
+    economic: "Análisis económico",
+    openMenu: "Abrir menú",
+    navLabel: "MENÚ PRINCIPAL",
+    engine: "Motor de análisis",
+    engineReady: "Listo para evaluar alternativas.",
+    heroTitle: "Decisiones inteligentes.",
+    heroTitle2: "Máquinas óptimas.",
+    heroDescription: "Evalúa, compara y selecciona maquinaria con herramientas de análisis económico diseñadas para tomar mejores decisiones.",
+    startAnalysis: "Comenzar análisis",
+    viewResults: "Ver resultados",
+    heroCaption: "Analiza los datos. Compara alternativas. Decide mejor.",
+    controlCenter: "TU CENTRO DE CONTROL",
+    projectSummary: "Resumen del proyecto",
+    manageAlternatives: "Gestiona tus alternativas desde un solo lugar.",
+    registeredMachines: "Máquinas registradas",
+    availableAlternatives: "Alternativas disponibles",
+    evaluation: "Evaluación",
+    pending: "Pendiente",
+    analysisStatus: "Estado de tu análisis",
+    bestAlternative: "Mejor alternativa",
+    undefined: "Sin definir",
+    lastCalculation: "Según el último cálculo",
+    readyCompare: "¿Listo para comparar?",
+    registerCosts: "Registra los costos y las características de tus máquinas para comenzar.",
+    registerMachines: "Registrar máquinas",
+    dataEntry: "01 / ENTRADA DE DATOS",
+    machineRegistration: "Registro de máquinas",
+    enterEconomic: "Introduce la información económica de cada alternativa.",
+    machinesCount: "{count} de {max} máquinas",
+    currencyNotice: "Ingresa los valores en pesos colombianos (COP). Utiliza los mismos criterios y unidades para todas las alternativas.",
+    addMachine: "＋ Agregar máquina",
+    calculateComparison: "Calcular comparación",
+    editData: "Editar datos",
+    quantitative: "02 / ANÁLISIS CUANTITATIVO",
+    comparisonTitle: "Comparación de resultados",
+    indicators: "Consulta los indicadores calculados para cada alternativa.",
+    evaluatedAlternatives: "ALTERNATIVAS EVALUADAS",
+    lowestAnnualCost: "MENOR COSTO ANUAL EQUIVALENTE",
+    economicComparison: "Comparativa económica",
+    lowerCAE: "Un menor costo anual equivalente es mejor bajo los supuestos del modelo.",
+    tableResults: "Tabla de resultados",
+    evaluatedIndicators: "Indicadores de las alternativas evaluadas.",
+    machine: "Máquina",
+    initialInvestment: "Inversión inicial",
+    usefulLife: "Vida útil",
+    annualCAE: "CAE anual",
+    result: "Resultado",
+    noResults: "Todavía no hay resultados. Primero registra y calcula tus máquinas.",
+    emptyChart: "Registra al menos dos máquinas y calcula la comparación para visualizar los resultados.",
+    decision: "03 / DECISIÓN FUNDAMENTADA",
+    finalRecommendation: "Recomendación final",
+    discoverAlternative: "Descubre qué alternativa presenta el menor costo anual equivalente.",
+    startHere: "Tu análisis comienza aquí",
+    needTwo: "Registra al menos dos máquinas y calcula los resultados para obtener una recomendación.",
+    startEvaluation: "Comenzar evaluación",
+    methodology: "Metodología de evaluación",
+    assumptions: "Supuestos utilizados por el modelo provisional.",
+    dataCollection: "Recopilación de datos",
+    dataCollectionDesc: "Se utilizan inversión inicial, operación, mantenimiento, salvamento y vida útil.",
+    economicEquivalence: "Equivalencia económica",
+    economicEquivalenceDesc: "Se anualizan los costos considerando la tasa de descuento indicada.",
+    alternativeSelection: "Selección de alternativa",
+    alternativeSelectionDesc: "Se identifica el menor costo anual equivalente entre las opciones válidas.",
+    warning: "Importante: este método es provisional. La recomendación definitiva debe utilizar la fórmula de reemplazo y los supuestos exigidos en tu curso.",
+    footer: "Plataforma de análisis económico",
+    newMachine: "Nueva máquina",
+    economicData: "Datos económicos y operativos",
+    editing: "En edición",
+    machineName: "Nombre de la máquina",
+    purchasePrice: "Precio de compra (COP)",
+    salvageValue: "Valor de salvamento (COP)",
+    usefulLifeYears: "Vida útil (años)",
+    discountRate: "Tasa de descuento anual (%)",
+    operatingCost: "Costo anual de operación (COP)",
+    maintenanceCost: "Costo anual de mantenimiento (COP)",
+    exampleMachine: "Ej. Excavadora CAT 320",
+    examplePurchase: "Ej. 250000000",
+    exampleSalvage: "Ej. 40000000",
+    exampleLife: "Ej. 10",
+    exampleRate: "Ej. 12",
+    exampleOperation: "Ej. 18000000",
+    exampleMaintenance: "Ej. 5000000",
+    initialInvestmentHelp: "Inversión inicial de la máquina.",
+    salvageHelp: "Valor estimado al final de la vida útil.",
+    rateHelp: "Ingresa 12 para representar una tasa del 12 %.",
+    requiredFields: "* Campos obligatorios",
+    deleteMachine: "Eliminar máquina",
+    machineAria: "máquina",
+    maxMachinesToast: "Has alcanzado el límite de seis máquinas.",
+    machineDeleted: "Máquina eliminada.",
+    maxReached: "Límite de seis máquinas alcanzado",
+    minTwoTitle: "Debes registrar al menos dos máquinas.",
+    calculateTitle: "Calcular la comparación.",
+    statusComplete: "Completada",
+    modifyToUpdate: "Modifica o registra tus máquinas y vuelve a calcular para visualizar los resultados actualizados.",
+    resultsPending: "Los resultados están pendientes de un nuevo cálculo.",
+    analysisPending: "Tu análisis está pendiente",
+    dataChanged: "Los datos cambiaron. Vuelve a calcular la comparación para obtener una recomendación actualizada.",
+    reviewMachines: "Revisar máquinas",
+    atLeastTwo: "Registra al menos dos máquinas para comparar.",
+    onlySix: "Solo puedes comparar hasta seis máquinas.",
+    machineNumber: "Máquina {number}",
+    enterName: "escribe un nombre.",
+    uniqueName: "cada máquina debe tener un nombre diferente.",
+    validValue: "ingresa un valor válido para {field}.",
+    purchaseField: "precio de compra",
+    salvageField: "valor de salvamento",
+    lifeField: "vida útil",
+    rateField: "tasa de descuento",
+    operationField: "costo de operación",
+    maintenanceField: "costo de mantenimiento",
+    pricePositive: "el precio debe ser mayor que cero.",
+    salvageNonnegative: "el valor de salvamento no puede ser negativo.",
+    salvageBelowPrice: "el valor de salvamento no debe superar el precio de compra.",
+    lifePositive: "la vida útil debe ser mayor que cero.",
+    rateRange: "la tasa debe estar entre 0 % y 100 %.",
+    costNonnegative: "el costo no puede ser negativo.",
+    errorCount: "{count} problema(s) encontrado(s). {first}",
+    negativeCAE: "Se obtuvo un costo anual equivalente negativo. Revisa los datos.",
+    calculationError: "No fue posible calcular el CAE de {name}.",
+    calculatedProvisional: "Comparación calculada correctamente con el modelo provisional CAE.",
+    calculated: "Comparación calculada correctamente.",
+    years: "años",
+    lowestCAE: "Menor CAE",
+    position: "Posición {number}",
+    recommended: "✧ ALTERNATIVA RECOMENDADA",
+    recommendationDescription: "Según el modelo provisional de costo anual equivalente, esta alternativa presenta el menor costo anual entre las máquinas evaluadas. La recomendación depende de los datos ingresados y de los supuestos del modelo.",
+    annualEquivalent: "Costo anual equivalente",
+    whyRecommended: "¿Por qué se recomienda esta máquina?",
+    reasonCAE: "Su costo anual equivalente calculado es {value}.",
+    reasonInvestment: "Su inversión inicial es {value}.",
+    reasonLife: "Se evaluó con una vida útil de {life} años y una tasa anual del {rate} %.",
+    reasonDifference: "La diferencia frente a la segunda alternativa es de {value} por año según el modelo.",
+    tie: "Existe un empate en el menor CAE. Se necesitan criterios adicionales para elegir entre las alternativas empatadas.",
+    lowerPercentage: "El CAE es aproximadamente un {value} % menor que el de la segunda alternativa.",
+    recommendationNote: "Esta recomendación es económica, no una garantía de superioridad técnica. Antes de decidir, verifica capacidad, seguridad, disponibilidad de repuestos, compatibilidad operativa y los supuestos de la fórmula exigida en clase."
+  },
+
+  en: {
+    pages: { inicio: "Home", maquinas: "My machines", comparacion: "Comparison", recomendacion: "Recommendation" },
+    economic: "Economic analysis",
+    openMenu: "Open menu",
+    navLabel: "MAIN MENU",
+    engine: "Analysis engine",
+    engineReady: "Ready to evaluate alternatives.",
+    heroTitle: "Smart decisions.",
+    heroTitle2: "Optimal machines.",
+    heroDescription: "Evaluate, compare, and select machinery with economic analysis tools designed to help you make better decisions.",
+    startAnalysis: "Start analysis",
+    viewResults: "View results",
+    heroCaption: "Analyze the data. Compare alternatives. Make better decisions.",
+    controlCenter: "YOUR CONTROL CENTER",
+    projectSummary: "Project summary",
+    manageAlternatives: "Manage your alternatives from one place.",
+    registeredMachines: "Registered machines",
+    availableAlternatives: "Available alternatives",
+    evaluation: "Evaluation",
+    pending: "Pending",
+    analysisStatus: "Analysis status",
+    bestAlternative: "Best alternative",
+    undefined: "Not defined",
+    lastCalculation: "According to the latest calculation",
+    readyCompare: "Ready to compare?",
+    registerCosts: "Enter the costs and characteristics of your machines to get started.",
+    registerMachines: "Register machines",
+    dataEntry: "01 / DATA ENTRY",
+    machineRegistration: "Machine registration",
+    enterEconomic: "Enter the economic information for each alternative.",
+    machinesCount: "{count} of {max} machines",
+    currencyNotice: "Enter values in Colombian pesos (COP). Use the same criteria and units for all alternatives.",
+    addMachine: "＋ Add machine",
+    calculateComparison: "Calculate comparison",
+    editData: "Edit data",
+    quantitative: "02 / QUANTITATIVE ANALYSIS",
+    comparisonTitle: "Results comparison",
+    indicators: "Review the calculated indicators for each alternative.",
+    evaluatedAlternatives: "EVALUATED ALTERNATIVES",
+    lowestAnnualCost: "LOWEST EQUIVALENT ANNUAL COST",
+    economicComparison: "Economic comparison",
+    lowerCAE: "A lower equivalent annual cost is better under the model assumptions.",
+    tableResults: "Results table",
+    evaluatedIndicators: "Indicators for the evaluated alternatives.",
+    machine: "Machine",
+    initialInvestment: "Initial investment",
+    usefulLife: "Useful life",
+    annualCAE: "Annual EAC",
+    result: "Result",
+    noResults: "There are no results yet. Register your machines and calculate first.",
+    emptyChart: "Register at least two machines and calculate the comparison to view the results.",
+    decision: "03 / INFORMED DECISION",
+    finalRecommendation: "Final recommendation",
+    discoverAlternative: "Find out which alternative has the lowest equivalent annual cost.",
+    startHere: "Your analysis starts here",
+    needTwo: "Register at least two machines and calculate the results to get a recommendation.",
+    startEvaluation: "Start evaluation",
+    methodology: "Evaluation methodology",
+    assumptions: "Assumptions used by the provisional model.",
+    dataCollection: "Data collection",
+    dataCollectionDesc: "Initial investment, operation, maintenance, salvage value, and useful life are used.",
+    economicEquivalence: "Economic equivalence",
+    economicEquivalenceDesc: "Costs are annualized using the specified discount rate.",
+    alternativeSelection: "Alternative selection",
+    alternativeSelectionDesc: "The lowest equivalent annual cost is identified among the valid options.",
+    warning: "Important: this method is provisional. The final recommendation must use the replacement formula and assumptions required in your course.",
+    footer: "Economic analysis platform",
+    newMachine: "New machine",
+    economicData: "Economic and operating data",
+    editing: "Editing",
+    machineName: "Machine name",
+    purchasePrice: "Purchase price (COP)",
+    salvageValue: "Salvage value (COP)",
+    usefulLifeYears: "Useful life (years)",
+    discountRate: "Annual discount rate (%)",
+    operatingCost: "Annual operating cost (COP)",
+    maintenanceCost: "Annual maintenance cost (COP)",
+    exampleMachine: "E.g. CAT 320 Excavator",
+    examplePurchase: "E.g. 250000000",
+    exampleSalvage: "E.g. 40000000",
+    exampleLife: "E.g. 10",
+    exampleRate: "E.g. 12",
+    exampleOperation: "E.g. 18000000",
+    exampleMaintenance: "E.g. 5000000",
+    initialInvestmentHelp: "Initial investment in the machine.",
+    salvageHelp: "Estimated value at the end of its useful life.",
+    rateHelp: "Enter 12 to represent a 12% rate.",
+    requiredFields: "* Required fields",
+    deleteMachine: "Delete machine",
+    machineAria: "machine",
+    maxMachinesToast: "You have reached the six-machine limit.",
+    machineDeleted: "Machine deleted.",
+    maxReached: "Six-machine limit reached",
+    minTwoTitle: "You must register at least two machines.",
+    calculateTitle: "Calculate the comparison.",
+    statusComplete: "Completed",
+    modifyToUpdate: "Modify or register your machines and calculate again to view updated results.",
+    resultsPending: "Results are pending a new calculation.",
+    analysisPending: "Your analysis is pending",
+    dataChanged: "The data has changed. Calculate the comparison again to get an updated recommendation.",
+    reviewMachines: "Review machines",
+    atLeastTwo: "Register at least two machines to compare.",
+    onlySix: "You can compare up to six machines only.",
+    machineNumber: "Machine {number}",
+    enterName: "enter a name.",
+    uniqueName: "each machine must have a different name.",
+    validValue: "enter a valid value for {field}.",
+    purchaseField: "purchase price",
+    salvageField: "salvage value",
+    lifeField: "useful life",
+    rateField: "discount rate",
+    operationField: "operating cost",
+    maintenanceField: "maintenance cost",
+    pricePositive: "the price must be greater than zero.",
+    salvageNonnegative: "the salvage value cannot be negative.",
+    salvageBelowPrice: "the salvage value must not exceed the purchase price.",
+    lifePositive: "the useful life must be greater than zero.",
+    rateRange: "the rate must be between 0% and 100%.",
+    costNonnegative: "the cost cannot be negative.",
+    errorCount: "{count} issue(s) found. {first}",
+    negativeCAE: "A negative equivalent annual cost was obtained. Please check the data.",
+    calculationError: "Could not calculate EAC for {name}.",
+    calculatedProvisional: "Comparison successfully calculated using the provisional EAC model.",
+    calculated: "Comparison calculated successfully.",
+    years: "years",
+    lowestCAE: "Lowest EAC",
+    position: "Rank {number}",
+    recommended: "✧ RECOMMENDED ALTERNATIVE",
+    recommendationDescription: "According to the provisional equivalent annual cost model, this alternative has the lowest annual cost among the evaluated machines. The recommendation depends on the entered data and the model assumptions.",
+    annualEquivalent: "Equivalent annual cost",
+    whyRecommended: "Why is this machine recommended?",
+    reasonCAE: "Its calculated equivalent annual cost is {value}.",
+    reasonInvestment: "Its initial investment is {value}.",
+    reasonLife: "It was evaluated with a useful life of {life} years and an annual rate of {rate}%.",
+    reasonDifference: "The difference compared with the second alternative is {value} per year according to the model.",
+    tie: "There is a tie for the lowest EAC. Additional criteria are needed to choose between the tied alternatives.",
+    lowerPercentage: "Its EAC is approximately {value}% lower than that of the second alternative.",
+    recommendationNote: "This is an economic recommendation, not a guarantee of technical superiority. Before deciding, verify capacity, safety, spare-parts availability, operating compatibility, and the assumptions of the formula required in class."
+  }
+};
+let currentLanguage = "es";
+
+function t(key, values = {}) {
+  let value = translations[currentLanguage][key] ?? translations.es[key] ?? key;
+  return value.replace(/\{(\w+)\}/g, (_, name) => values[name] ?? "");
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat(currentLanguage === "es" ? "es-CO" : "en-US", {
+    style: "currency", currency: "COP", maximumFractionDigits: 0
+  }).format(value);
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat(currentLanguage === "es" ? "es-CO" : "en-US", {
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+// Traduce el contenido fijo del HTML sin modificar la estructura ni los cálculos.
+const staticText = {
+  "MENÚ PRINCIPAL": "navLabel",
+  "Inicio": "navInicio",
+  "Mis máquinas": "navMachines",
+  "Comparación": "navComparison",
+  "Recomendación": "navRecommendation",
+  "Motor de análisis": "engine",
+  "Listo para evaluar alternativas.": "engineReady",
+  "Análisis económico": "economic",
+  "Decisiones inteligentes.": "heroTitle",
+  "Máquinas óptimas.": "heroTitle2",
+  "Evalúa, compara y selecciona maquinaria con herramientas de análisis económico diseñadas para tomar mejores decisiones.": "heroDescription",
+  "Comenzar análisis": "startAnalysis",
+  "Ver resultados": "viewResults",
+  "Analiza los datos. Compara alternativas. Decide mejor.": "heroCaption",
+  "TU CENTRO DE CONTROL": "controlCenter",
+  "Resumen del proyecto": "projectSummary",
+  "Gestiona tus alternativas desde un solo lugar.": "manageAlternatives",
+  "Máquinas registradas": "registeredMachines",
+  "Alternativas disponibles": "availableAlternatives",
+  "Evaluación": "evaluation",
+  "Pendiente": "pending",
+  "Estado de tu análisis": "analysisStatus",
+  "Mejor alternativa": "bestAlternative",
+  "Sin definir": "undefined",
+  "Según el último cálculo": "lastCalculation",
+  "¿Listo para comparar?": "readyCompare",
+  "Registra los costos y las características de tus máquinas para comenzar.": "registerCosts",
+  "Registrar máquinas": "registerMachines",
+  "01 / ENTRADA DE DATOS": "dataEntry",
+  "Registro de máquinas": "machineRegistration",
+  "Introduce la información económica de cada alternativa.": "enterEconomic",
+  "Ingresa los valores en pesos colombianos (COP). Utiliza los mismos criterios y unidades para todas las alternativas.": "currencyNotice",
+  "＋ Agregar máquina": "addMachine",
+  "Calcular comparación": "calculateComparison",
+  "02 / ANÁLISIS CUANTITATIVO": "quantitative",
+  "Comparación de resultados": "comparisonTitle",
+  "Consulta los indicadores calculados para cada alternativa.": "indicators",
+  "ALTERNATIVAS EVALUADAS": "evaluatedAlternatives",
+  "MENOR COSTO ANUAL EQUIVALENTE": "lowestAnnualCost",
+  "Comparativa económica": "economicComparison",
+  "Menor costo anual equivalente es mejor bajo los supuestos del modelo.": "lowerCAE",
+  "Tabla de resultados": "tableResults",
+  "Indicadores de las alternativas evaluadas.": "evaluatedIndicators",
+  "Máquina": "machine",
+  "Inversión inicial": "initialInvestment",
+  "Vida útil": "usefulLife",
+  "CAE anual": "annualCAE",
+  "Resultado": "result",
+  "Todavía no hay resultados. Primero registra y calcula tus máquinas.": "noResults",
+  "03 / DECISIÓN FUNDAMENTADA": "decision",
+  "Recomendación final": "finalRecommendation",
+  "Descubre qué alternativa presenta el menor costo anual equivalente.": "discoverAlternative",
+  "Tu análisis comienza aquí": "startHere",
+  "Registra al menos dos máquinas y calcula los resultados para obtener una recomendación.": "needTwo",
+  "Comenzar evaluación": "startEvaluation",
+  "Metodología de evaluación": "methodology",
+  "Supuestos utilizados por el modelo provisional.": "assumptions",
+  "Recopilación de datos": "dataCollection",
+  "Se utilizan inversión inicial, operación, mantenimiento, salvamento y vida útil.": "dataCollectionDesc",
+  "Equivalencia económica": "economicEquivalence",
+  "Se anualizan los costos considerando la tasa de descuento indicada.": "economicEquivalenceDesc",
+  "Selección de alternativa": "alternativeSelection",
+  "Se identifica el menor costo anual equivalente entre las opciones válidas.": "alternativeSelectionDesc",
+  "Importante: este método es provisional. La recomendación definitiva debe utilizar la fórmula de reemplazo y los supuestos exigidos en tu curso.": "warning",
+  "Plataforma de análisis económico": "footer"
+};
+
+const staticEnglish = {
+  navInicio: "Home",
+  navMachines: "My machines",
+  navComparison: "Comparison",
+  navRecommendation: "Recommendation"
+};
+
+function translateStaticHTML() {
+  const dictionary = translations[currentLanguage];
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+
+  while (walker.nextNode()) {
+    nodes.push(walker.currentNode);
+  }
+
+  nodes.forEach((node) => {
+    // Conserva el texto original para permitir cambiar de idioma varias veces.
+    if (node.__maqnityOriginalText === undefined) {
+      node.__maqnityOriginalText = node.nodeValue;
+    }
+
+    const originalText = node.__maqnityOriginalText;
+    const original = originalText.trim();
+    const key = staticText[original];
+
+    if (!key) return;
+
+    let translated = currentLanguage === "en"
+      ? (staticEnglish[key] ?? dictionary[key] ?? original)
+      : original;
+
+    const leading = originalText.match(/^\s*/)?.[0] ?? "";
+    const trailing = originalText.match(/\s*$/)?.[0] ?? "";
+
+    node.nodeValue = leading + translated + trailing;
+  });
+
+  const menuButton = document.getElementById("menuToggle");
+
+  if (menuButton) {
+    menuButton.setAttribute("aria-label", t("openMenu"));
+  }
+
+  document.documentElement.lang = currentLanguage;
+}
+
+// =========================================
+// 3. ESTADO DE LA APLICACIÓN
 // =========================================
 
 const MAX_MACHINES = 6;
@@ -54,45 +467,76 @@ let results = [];
 let lastCalculationValid = false;
 let toastTimeout;
 
-// =========================================
-// 3. CONFIGURACIÓN GENERAL
-// =========================================
-
 const pageTitles = {
-  inicio: "Inicio",
-  maquinas: "Mis máquinas",
-  comparacion: "Comparación",
-  recomendacion: "Recomendación"
+  es: {
+    inicio: "Inicio",
+    maquinas: "Mis máquinas",
+    comparacion: "Comparación",
+    recomendacion: "Recomendación"
+  },
+  en: {
+    inicio: "Home",
+    maquinas: "My machines",
+    comparacion: "Comparison",
+    recomendacion: "Recommendation"
+  }
 };
 
-const currencyFormatter = new Intl.NumberFormat("es-CO", {
-  style: "currency",
-  currency: "COP",
-  maximumFractionDigits: 0
-});
+// =========================================
+// 4. CAMBIO DE IDIOMA
+// =========================================
 
-const numberFormatter = new Intl.NumberFormat("es-CO", {
-  maximumFractionDigits: 2
-});
+function setLanguage(language) {
+  if (!translations[language] || language === currentLanguage) return;
 
-function formatCurrency(value) {
-  return currencyFormatter.format(value);
+  currentLanguage = language;
+
+  document.querySelectorAll("[data-language]").forEach((button) => {
+    const active = button.dataset.language === language;
+
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+
+  translateStaticHTML();
+  renderMachines();
+
+  const activePage = document.querySelector(".page.active");
+
+  if (pageName && activePage) {
+    pageName.textContent = pageTitles[currentLanguage][activePage.id];
+  }
+
+  if (lastCalculationValid && results.length) {
+    evaluationStatus.textContent = t("statusComplete");
+    bestMachineHome.textContent = results[0].name;
+    renderResults();
+  } else {
+    evaluationStatus.textContent = t("pending");
+    bestMachineHome.textContent = t("undefined");
+    renderPendingResults();
+  }
+
+  if (formFeedback && formFeedback.textContent) {
+    formFeedback.textContent = "";
+    formFeedback.className = "form-feedback";
+  }
 }
 
-function formatNumber(value) {
-  return numberFormatter.format(value);
-}
+document.querySelectorAll("[data-language]").forEach((button) => {
+  button.addEventListener("click", () => {
+    setLanguage(button.dataset.language);
+  });
+});
 
 // =========================================
-// 4. NAVEGACIÓN ENTRE SECCIONES
+// 5. NAVEGACIÓN ENTRE SECCIONES
 // =========================================
 
 function showPage(sectionId) {
   const target = document.getElementById(sectionId);
 
-  if (!target || !pageTitles[sectionId]) {
-    return;
-  }
+  if (!target || !pageTitles[currentLanguage][sectionId]) return;
 
   document.querySelectorAll(".page").forEach((page) => {
     page.classList.toggle("active", page.id === sectionId);
@@ -110,7 +554,7 @@ function showPage(sectionId) {
     }
   });
 
-  pageName.textContent = pageTitles[sectionId];
+  pageName.textContent = pageTitles[currentLanguage][sectionId];
 
   if (sidebar) {
     sidebar.classList.remove("open");
@@ -146,7 +590,6 @@ if (menuToggle && sidebar) {
 
   menuToggle.addEventListener("click", () => {
     const isOpen = sidebar.classList.toggle("open");
-
     menuToggle.setAttribute("aria-expanded", String(isOpen));
   });
 
@@ -172,7 +615,7 @@ if (menuToggle && sidebar) {
 }
 
 // =========================================
-// 5. NOTIFICACIONES
+// 6. NOTIFICACIONES
 // =========================================
 
 function showToast(message) {
@@ -200,7 +643,7 @@ function showFeedback(message, type = "") {
 }
 
 // =========================================
-// 6. CREAR EL FORMULARIO DE UNA MÁQUINA
+// 7. CREAR EL FORMULARIO DE UNA MÁQUINA
 // =========================================
 
 function createMachineCard(machine) {
@@ -218,20 +661,20 @@ function createMachineCard(machine) {
 
         <div>
           <h3 class="machine-heading">
-            ${escapeHTML(machine.name || "Nueva máquina")}
+            ${escapeHTML(machine.name || t("newMachine"))}
           </h3>
-          <p>Datos económicos y operativos</p>
+          <p>${t("economicData")}</p>
         </div>
       </div>
 
-      <span class="status-badge">En edición</span>
+      <span class="status-badge">${t("editing")}</span>
     </div>
 
     <div class="machine-card-body">
 
       <div class="form-group full-width">
         <label for="name-${machine.id}">
-          Nombre de la máquina *
+          ${t("machineName")} *
         </label>
 
         <input
@@ -239,7 +682,7 @@ function createMachineCard(machine) {
           name="name"
           type="text"
           maxlength="80"
-          placeholder="Ej. Excavadora CAT 320"
+          placeholder="${t("exampleMachine")}"
           value="${escapeHTML(machine.name)}"
           required
         >
@@ -247,7 +690,7 @@ function createMachineCard(machine) {
 
       <div class="form-group">
         <label for="price-${machine.id}">
-          Precio de compra (COP) *
+          ${t("purchasePrice")} *
         </label>
 
         <input
@@ -257,18 +700,19 @@ function createMachineCard(machine) {
           min="0.01"
           step="any"
           inputmode="decimal"
-          placeholder="Ej. 250000000"
+          placeholder="${t("examplePurchase")}"
           value="${machine.price}"
           required
         >
+
         <span class="field-help">
-          Inversión inicial de la máquina.
+          ${t("initialInvestmentHelp")}
         </span>
       </div>
 
       <div class="form-group">
         <label for="salvage-${machine.id}">
-          Valor de salvamento (COP) *
+          ${t("salvageValue")} *
         </label>
 
         <input
@@ -278,18 +722,19 @@ function createMachineCard(machine) {
           min="0"
           step="any"
           inputmode="decimal"
-          placeholder="Ej. 40000000"
+          placeholder="${t("exampleSalvage")}"
           value="${machine.salvage}"
           required
         >
+
         <span class="field-help">
-          Valor estimado al final de la vida útil.
+          ${t("salvageHelp")}
         </span>
       </div>
 
       <div class="form-group">
         <label for="life-${machine.id}">
-          Vida útil (años) *
+          ${t("usefulLifeYears")} *
         </label>
 
         <input
@@ -299,7 +744,7 @@ function createMachineCard(machine) {
           min="0.01"
           step="any"
           inputmode="decimal"
-          placeholder="Ej. 10"
+          placeholder="${t("exampleLife")}"
           value="${machine.life}"
           required
         >
@@ -307,7 +752,7 @@ function createMachineCard(machine) {
 
       <div class="form-group">
         <label for="interest-${machine.id}">
-          Tasa de descuento anual (%) *
+          ${t("discountRate")} *
         </label>
 
         <input
@@ -318,18 +763,19 @@ function createMachineCard(machine) {
           max="100"
           step="any"
           inputmode="decimal"
-          placeholder="Ej. 12"
+          placeholder="${t("exampleRate")}"
           value="${machine.interest}"
           required
         >
+
         <span class="field-help">
-          Ingresa 12 para representar una tasa del 12 %.
+          ${t("rateHelp")}
         </span>
       </div>
 
       <div class="form-group">
         <label for="operation-${machine.id}">
-          Costo anual de operación (COP) *
+          ${t("operatingCost")} *
         </label>
 
         <input
@@ -339,7 +785,7 @@ function createMachineCard(machine) {
           min="0"
           step="any"
           inputmode="decimal"
-          placeholder="Ej. 18000000"
+          placeholder="${t("exampleOperation")}"
           value="${machine.operation}"
           required
         >
@@ -347,7 +793,7 @@ function createMachineCard(machine) {
 
       <div class="form-group">
         <label for="maintenance-${machine.id}">
-          Costo anual de mantenimiento (COP) *
+          ${t("maintenanceCost")} *
         </label>
 
         <input
@@ -357,7 +803,7 @@ function createMachineCard(machine) {
           min="0"
           step="any"
           inputmode="decimal"
-          placeholder="Ej. 5000000"
+          placeholder="${t("exampleMaintenance")}"
           value="${machine.maintenance}"
           required
         >
@@ -366,31 +812,29 @@ function createMachineCard(machine) {
     </div>
 
     <div class="machine-card-footer">
-      <p>* Campos obligatorios</p>
+      <p>${t("requiredFields")}</p>
 
       <button
         type="button"
         class="remove-machine-btn"
         data-remove-machine="${machine.id}"
-        aria-label="Eliminar ${escapeHTML(machine.name || "máquina")}"
+        aria-label="${t("deleteMachine")} ${escapeHTML(machine.name || t("machineAria"))}"
       >
-        Eliminar máquina
+        ${t("deleteMachine")}
       </button>
     </div>
   `;
-
-  // Actualizar el nombre de la tarjeta al escribir.
 
   const nameInput = article.querySelector('[name="name"]');
   const heading = article.querySelector(".machine-heading");
   const removeButton = article.querySelector(".remove-machine-btn");
 
   nameInput.addEventListener("input", () => {
-    heading.textContent = nameInput.value.trim() || "Nueva máquina";
+    heading.textContent = nameInput.value.trim() || t("newMachine");
 
     removeButton.setAttribute(
       "aria-label",
-      `Eliminar ${nameInput.value.trim() || "máquina"}`
+      `${t("deleteMachine")} ${nameInput.value.trim() || t("machineAria")}`
     );
 
     machine.name = nameInput.value;
@@ -407,12 +851,7 @@ function createMachineCard(machine) {
 
       if (!currentMachine) return;
 
-      if (input.name === "name") {
-        currentMachine.name = input.value;
-      } else {
-        currentMachine[input.name] = input.value;
-      }
-
+      currentMachine[input.name] = input.value;
       invalidateResults();
     });
   });
@@ -443,7 +882,7 @@ function escapeHTML(value) {
 }
 
 // =========================================
-// 7. AGREGAR Y ELIMINAR MÁQUINAS
+// 8. AGREGAR Y ELIMINAR MÁQUINAS
 // =========================================
 
 function createEmptyMachine() {
@@ -461,7 +900,7 @@ function createEmptyMachine() {
 
 function addMachine() {
   if (machines.length >= MAX_MACHINES) {
-    showToast("Has alcanzado el límite de seis máquinas.");
+    showToast(t("maxMachinesToast"));
     return;
   }
 
@@ -490,7 +929,7 @@ function removeMachine(machineId) {
   renderMachines();
   invalidateResults();
 
-  showToast("Máquina eliminada.");
+  showToast(t("machineDeleted"));
 }
 
 function renderMachines() {
@@ -498,7 +937,6 @@ function renderMachines() {
 
   machines.forEach((machine, index) => {
     const card = createMachineCard(machine);
-
     const number = card.querySelector(".machine-number");
 
     number.textContent = String(index + 1).padStart(2, "0");
@@ -508,7 +946,10 @@ function renderMachines() {
 
   const count = machines.length;
 
-  machineCounter.textContent = `${count} de ${MAX_MACHINES} máquinas`;
+  machineCounter.textContent = t("machinesCount", {
+    count,
+    max: MAX_MACHINES
+  });
 
   totalMachines.innerHTML = `${count} <small>/ ${MAX_MACHINES}</small>`;
 
@@ -516,45 +957,40 @@ function renderMachines() {
 
   addMachineBtn.textContent =
     count >= MAX_MACHINES
-      ? "Límite de seis máquinas alcanzado"
-      : "＋ Agregar máquina";
+      ? t("maxReached")
+      : t("addMachine");
 
   calculateBtn.disabled = count < MIN_MACHINES;
 
-  if (count < MIN_MACHINES) {
-    calculateBtn.title = "Debes registrar al menos dos máquinas.";
-  } else {
-    calculateBtn.title = "Calcular la comparación.";
-  }
+  calculateBtn.title =
+    count < MIN_MACHINES
+      ? t("minTwoTitle")
+      : t("calculateTitle");
 }
 
 addMachineBtn.addEventListener("click", addMachine);
 
 // =========================================
-// 8. INVALIDAR RESULTADOS DESACTUALIZADOS
+// 9. RESULTADOS PENDIENTES / DESACTUALIZADOS
 // =========================================
 
-function invalidateResults() {
-  lastCalculationValid = false;
-  results = [];
-
-  evaluationStatus.textContent = "Pendiente";
-  bestMachineHome.textContent = "Sin definir";
+function renderPendingResults() {
+  evaluationStatus.textContent = t("pending");
+  bestMachineHome.textContent = t("undefined");
 
   resultCount.textContent = "0";
   resultBestCost.textContent = "—";
 
   chart.innerHTML = `
     <div class="empty-state">
-      Modifica o registra tus máquinas y vuelve a calcular
-      para visualizar los resultados actualizados.
+      ${t("modifyToUpdate")}
     </div>
   `;
 
   resultsTable.innerHTML = `
     <tr>
       <td colspan="5" class="empty-cell">
-        Los resultados están pendientes de un nuevo cálculo.
+        ${t("resultsPending")}
       </td>
     </tr>
   `;
@@ -562,13 +998,10 @@ function invalidateResults() {
   recommendationContent.innerHTML = `
     <div class="empty-recommendation">
       <div class="empty-recommendation-icon">✧</div>
-      <h2>Tu análisis está pendiente</h2>
-      <p>
-        Los datos cambiaron. Vuelve a calcular la comparación
-        para obtener una recomendación actualizada.
-      </p>
+      <h2>${t("analysisPending")}</h2>
+      <p>${t("dataChanged")}</p>
       <button class="btn btn-primary" data-go="maquinas">
-        Revisar máquinas →
+        ${t("reviewMachines")} →
       </button>
     </div>
   `;
@@ -578,8 +1011,14 @@ function invalidateResults() {
     .addEventListener("click", () => showPage("maquinas"));
 }
 
+function invalidateResults() {
+  lastCalculationValid = false;
+  results = [];
+  renderPendingResults();
+}
+
 // =========================================
-// 9. VALIDAR LOS DATOS
+// 10. VALIDAR LOS DATOS
 // =========================================
 
 function validateMachines() {
@@ -587,19 +1026,20 @@ function validateMachines() {
   const validMachines = [];
 
   if (machines.length < MIN_MACHINES) {
-    errors.push("Registra al menos dos máquinas para comparar.");
+    errors.push(t("atLeastTwo"));
     return { errors, validMachines };
   }
 
   if (machines.length > MAX_MACHINES) {
-    errors.push("Solo puedes comparar hasta seis máquinas.");
+    errors.push(t("onlySix"));
     return { errors, validMachines };
   }
 
   const usedNames = new Set();
 
   machines.forEach((machine, index) => {
-    const label = `Máquina ${index + 1}`;
+    const label = t("machineNumber", { number: index + 1 });
+
     const card = machineList.querySelector(
       `[data-machine-id="${machine.id}"]`
     );
@@ -628,52 +1068,51 @@ function validateMachines() {
     const name = String(machine.name).trim();
 
     if (!name) {
-      addError("name", "escribe un nombre.");
+      addError("name", t("enterName"));
     } else {
-      const normalizedName = name.toLocaleLowerCase("es");
+      const normalizedName = name.toLocaleLowerCase(
+        currentLanguage === "es" ? "es" : "en"
+      );
 
       if (usedNames.has(normalizedName)) {
-        addError("name", "cada máquina debe tener un nombre diferente.");
+        addError("name", t("uniqueName"));
       }
 
       usedNames.add(normalizedName);
     }
 
     const fields = [
-      ["price", "precio de compra"],
-      ["salvage", "valor de salvamento"],
-      ["life", "vida útil"],
-      ["interest", "tasa de descuento"],
-      ["operation", "costo de operación"],
-      ["maintenance", "costo de mantenimiento"]
+      ["price", "purchaseField"],
+      ["salvage", "salvageField"],
+      ["life", "lifeField"],
+      ["interest", "rateField"],
+      ["operation", "operationField"],
+      ["maintenance", "maintenanceField"]
     ];
 
     const values = {};
 
-    fields.forEach(([field, description]) => {
+    fields.forEach(([field, descriptionKey]) => {
       const rawValue = String(machine[field]).trim();
       const value = Number(rawValue);
 
       if (rawValue === "" || !Number.isFinite(value)) {
-        addError(field, `ingresa un valor válido para ${description}.`);
+        addError(field, t("validValue", {
+          field: t(descriptionKey)
+        }));
+
         return;
       }
 
       values[field] = value;
     });
 
-    if (
-      values.price !== undefined &&
-      values.price <= 0
-    ) {
-      addError("price", "el precio debe ser mayor que cero.");
+    if (values.price !== undefined && values.price <= 0) {
+      addError("price", t("pricePositive"));
     }
 
-    if (
-      values.salvage !== undefined &&
-      values.salvage < 0
-    ) {
-      addError("salvage", "el valor de salvamento no puede ser negativo.");
+    if (values.salvage !== undefined && values.salvage < 0) {
+      addError("salvage", t("salvageNonnegative"));
     }
 
     if (
@@ -681,29 +1120,23 @@ function validateMachines() {
       values.salvage !== undefined &&
       values.salvage > values.price
     ) {
-      addError(
-        "salvage",
-        "el valor de salvamento no debe superar el precio de compra."
-      );
+      addError("salvage", t("salvageBelowPrice"));
     }
 
-    if (
-      values.life !== undefined &&
-      values.life <= 0
-    ) {
-      addError("life", "la vida útil debe ser mayor que cero.");
+    if (values.life !== undefined && values.life <= 0) {
+      addError("life", t("lifePositive"));
     }
 
     if (
       values.interest !== undefined &&
       (values.interest < 0 || values.interest > 100)
     ) {
-      addError("interest", "la tasa debe estar entre 0 % y 100 %.");
+      addError("interest", t("rateRange"));
     }
 
     ["operation", "maintenance"].forEach((field) => {
       if (values[field] !== undefined && values[field] < 0) {
-        addError(field, "el costo no puede ser negativo.");
+        addError(field, t("costNonnegative"));
       }
     });
 
@@ -723,14 +1156,11 @@ function validateMachines() {
 
   return { errors, validMachines };
 }
-
 // =========================================
-// 10. MODELO PROVISIONAL DE CAE
+// 11. MODELO PROVISIONAL DE CAE
 // =========================================
 
 /*
-  Modelo provisional:
-  
   CAE = P(A/P, i, n) - S(A/F, i, n) + O + M
 
   P = precio inicial
@@ -743,9 +1173,8 @@ function validateMachines() {
   Si i = 0:
   CAE = (P - S) / n + O + M
 
-  Este modelo supone costos anuales constantes y
-  una tasa de descuento anual. Debe verificarse
-  contra el método exacto de la asignatura.
+  Este modelo es provisional y debe verificarse
+  con el método exacto de la asignatura.
 */
 
 function calculateCAE(machine) {
@@ -779,9 +1208,9 @@ function calculateCAE(machine) {
   const cae = capitalRecovery + operation + maintenance;
 
   if (!Number.isFinite(cae)) {
-    throw new Error(
-      `No fue posible calcular el CAE de ${machine.name}.`
-    );
+    throw new Error(t("calculationError", {
+      name: machine.name
+    }));
   }
 
   return {
@@ -792,7 +1221,7 @@ function calculateCAE(machine) {
 }
 
 // =========================================
-// 11. EJECUTAR LA COMPARACIÓN
+// 12. EJECUTAR LA COMPARACIÓN
 // =========================================
 
 function calculateComparison() {
@@ -804,19 +1233,18 @@ function calculateComparison() {
     invalidateResults();
 
     showFeedback(
-      `${errors.length} problema(s) encontrado(s). ${errors[0]}`,
+      t("errorCount", {
+        count: errors.length,
+        first: errors[0]
+      }),
       "error"
     );
 
     showToast(errors[0]);
 
-    const firstInvalid = machineList.querySelector(
-      '[aria-invalid="true"]'
-    );
-
-    if (firstInvalid) {
-      firstInvalid.focus();
-    }
+    machineList
+      .querySelector('[aria-invalid="true"]')
+      ?.focus();
 
     return;
   }
@@ -827,27 +1255,21 @@ function calculateComparison() {
       .sort((a, b) => a.cae - b.cae);
 
     if (results.some((result) => result.cae < 0)) {
-      throw new Error(
-        "Se obtuvo un costo anual equivalente negativo. Revisa los datos."
-      );
+      throw new Error(t("negativeCAE"));
     }
 
     lastCalculationValid = true;
 
     renderResults();
 
-    evaluationStatus.textContent = "Completada";
-
+    evaluationStatus.textContent = t("statusComplete");
     bestMachineHome.textContent = results[0].name;
 
-    showFeedback(
-      "Comparación calculada correctamente con el modelo provisional CAE.",
-      "success"
-    );
-
-    showToast("Comparación calculada correctamente.");
+    showFeedback(t("calculatedProvisional"), "success");
+    showToast(t("calculated"));
 
     showPage("comparacion");
+
   } catch (error) {
     invalidateResults();
 
@@ -859,7 +1281,7 @@ function calculateComparison() {
 calculateBtn.addEventListener("click", calculateComparison);
 
 // =========================================
-// 12. MOSTRAR TABLA DE RESULTADOS
+// 13. TABLA DE RESULTADOS
 // =========================================
 
 function renderResultsTable() {
@@ -877,7 +1299,7 @@ function renderResultsTable() {
     const values = [
       result.name,
       formatCurrency(result.price),
-      `${formatNumber(result.life)} años`,
+      `${formatNumber(result.life)} ${t("years")}`,
       formatCurrency(result.cae)
     ];
 
@@ -894,23 +1316,17 @@ function renderResultsTable() {
     });
 
     const statusCell = document.createElement("td");
+    const badge = document.createElement("span");
 
-    if (index === 0) {
-      const badge = document.createElement("span");
+    badge.className = index === 0
+      ? "best-badge"
+      : "status-badge";
 
-      badge.className = "best-badge";
-      badge.textContent = "Menor CAE";
+    badge.textContent = index === 0
+      ? t("lowestCAE")
+      : t("position", { number: index + 1 });
 
-      statusCell.appendChild(badge);
-    } else {
-      const badge = document.createElement("span");
-
-      badge.className = "status-badge";
-      badge.textContent = `Posición ${index + 1}`;
-
-      statusCell.appendChild(badge);
-    }
-
+    statusCell.appendChild(badge);
     row.appendChild(statusCell);
     fragment.appendChild(row);
   });
@@ -919,7 +1335,7 @@ function renderResultsTable() {
 }
 
 // =========================================
-// 13. MOSTRAR GRÁFICA COMPARATIVA
+// 14. GRÁFICA COMPARATIVA
 // =========================================
 
 function renderChart() {
@@ -970,7 +1386,7 @@ function renderChart() {
 }
 
 // =========================================
-// 14. GENERAR RECOMENDACIÓN
+// 15. GENERAR RECOMENDACIÓN
 // =========================================
 
 function renderRecommendation() {
@@ -993,7 +1409,7 @@ function renderRecommendation() {
   const eyebrow = document.createElement("span");
 
   eyebrow.className = "recommendation-eyebrow";
-  eyebrow.textContent = "✧ ALTERNATIVA RECOMENDADA";
+  eyebrow.textContent = t("recommended");
 
   const title = document.createElement("h2");
 
@@ -1001,22 +1417,18 @@ function renderRecommendation() {
 
   const description = document.createElement("p");
 
-  description.textContent =
-    "Según el modelo provisional de costo anual equivalente, " +
-    "esta alternativa presenta el menor costo anual entre las " +
-    "máquinas evaluadas. La recomendación depende de los datos " +
-    "ingresados y de los supuestos del modelo.";
+  description.textContent = t("recommendationDescription");
 
   const metrics = document.createElement("div");
 
   metrics.className = "recommendation-metrics";
 
   const metricData = [
-    ["Costo anual equivalente", formatCurrency(best.cae)],
-    ["Inversión inicial", formatCurrency(best.price)],
+    [t("annualEquivalent"), formatCurrency(best.cae)],
+    [t("initialInvestment"), formatCurrency(best.price)],
     [
-      "Vida útil estimada",
-      `${formatNumber(best.life)} años`
+      t("usefulLife"),
+      `${formatNumber(best.life)} ${t("years")}`
     ]
   ];
 
@@ -1043,34 +1455,44 @@ function renderRecommendation() {
 
   const detailTitle = document.createElement("h3");
 
-  detailTitle.textContent = "¿Por qué se recomienda esta máquina?";
+  detailTitle.textContent = t("whyRecommended");
 
   const detailList = document.createElement("ul");
 
   const reasons = [
-    `Su costo anual equivalente calculado es ${formatCurrency(best.cae)}.`,
-    `Su inversión inicial es ${formatCurrency(best.price)}.`,
-    `Se evaluó con una vida útil de ${formatNumber(best.life)} años y una tasa anual del ${formatNumber(best.interest * 100)} %.`
+    t("reasonCAE", {
+      value: formatCurrency(best.cae)
+    }),
+    t("reasonInvestment", {
+      value: formatCurrency(best.price)
+    }),
+    t("reasonLife", {
+      life: formatNumber(best.life),
+      rate: formatNumber(best.interest * 100)
+    })
   ];
 
   if (results.length > 1) {
     reasons.push(
-      `La diferencia frente a la segunda alternativa es de ${formatCurrency(difference)} por año según el modelo.`
+      t("reasonDifference", {
+        value: formatCurrency(difference)
+      })
     );
 
     if (difference === 0) {
-      reasons.push(
-        "Existe un empate en el menor CAE. Se necesitan criterios adicionales para elegir entre las alternativas empatadas."
-      );
+      reasons.push(t("tie"));
     } else {
       reasons.push(
-        `El CAE es aproximadamente un ${formatNumber(percentage)} % menor que el de la segunda alternativa.`
+        t("lowerPercentage", {
+          value: formatNumber(percentage)
+        })
       );
     }
   }
 
   reasons.forEach((reason) => {
     const item = document.createElement("li");
+
     item.textContent = reason;
     detailList.appendChild(item);
   });
@@ -1079,11 +1501,7 @@ function renderRecommendation() {
 
   note.style.marginTop = "16px";
 
-  note.textContent =
-    "Esta recomendación es económica, no una garantía de superioridad " +
-    "técnica. Antes de decidir, verifica capacidad, seguridad, " +
-    "disponibilidad de repuestos, compatibilidad operativa y los " +
-    "supuestos de la fórmula exigida en clase.";
+  note.textContent = t("recommendationNote");
 
   detail.append(detailTitle, detailList, note);
 
@@ -1091,7 +1509,7 @@ function renderRecommendation() {
 }
 
 // =========================================
-// 15. ACTUALIZAR TODA LA COMPARACIÓN
+// 16. ACTUALIZAR LA COMPARACIÓN
 // =========================================
 
 function renderResults() {
@@ -1107,7 +1525,7 @@ function renderResults() {
 }
 
 // =========================================
-// 16. INICIAR LA APLICACIÓN
+// 17. INICIAR LA APLICACIÓN
 // =========================================
 
 function initializeApp() {
@@ -1122,8 +1540,8 @@ function initializeApp() {
 
   // Estado inicial de la evaluación.
 
-  evaluationStatus.textContent = "Pendiente";
-  bestMachineHome.textContent = "Sin definir";
+  evaluationStatus.textContent = t("pending");
+  bestMachineHome.textContent = t("undefined");
 
   resultCount.textContent = "0";
   resultBestCost.textContent = "—";
@@ -1133,4 +1551,5 @@ function initializeApp() {
   showPage("inicio");
 }
 
+translateStaticHTML();
 initializeApp();

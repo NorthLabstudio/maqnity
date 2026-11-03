@@ -2019,3 +2019,60 @@ tbody tr.best-row {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================
+   SELECTOR DE IDIOMA — ES / EN
+   ========================================= */
+
+.language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: #f0f3f8;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.language-option {
+  min-width: 34px;
+  padding: 6px 8px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-option:hover {
+  color: var(--navy);
+}
+
+.language-option.active {
+  color: #ffffff;
+  background: var(--navy);
+  box-shadow: 0 1px 4px rgba(11, 22, 48, 0.15);
+}
+
+.language-option:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .topbar-right {
+    gap: 7px;
+  }
+
+  .topbar-label {
+    display: none;
+  }
+}
