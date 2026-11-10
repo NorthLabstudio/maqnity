@@ -1528,17 +1528,15 @@ function renderResults() {
 // 17. INICIAR LA APLICACIÓN
 // =========================================
 
-function initializeApp() {
-  // Mostrar dos formularios al abrir la aplicación.
 
-  machines = [
-    createEmptyMachine(),
-    createEmptyMachine()
-  ];
+function initializeApp() {
+  // Comenzar con cero máquinas registradas.
+  machines = [];
 
   renderMachines();
 
   // Estado inicial de la evaluación.
+  renderPendingResults();
 
   evaluationStatus.textContent = t("pending");
   bestMachineHome.textContent = t("undefined");
@@ -1547,9 +1545,9 @@ function initializeApp() {
   resultBestCost.textContent = "—";
 
   // Iniciar en la página de inicio.
-
   showPage("inicio");
 }
+
 
 translateStaticHTML();
 initializeApp();
